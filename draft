@@ -1,0 +1,149 @@
+# 📦 Общий файл: docker-compose.yml
+
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: project_nginx
+    volumes:
+      - ./:/var/www
+      - ./_docker/nginx/:/etc/nginx/conf.d/
+    ports:
+      - "9090:80"
+    restart: unless-stopped
+    depends_on:
+      - php
+      - app
+
+  php:
+    image: php:8.3-fpm
+    container_name: project_php
+    volumes:
+      - ./:/var/www
+      - ./storage:/var/www/storage
+      - ./public:/var/www/public
+    environment:
+      PHP_MEMORY_LIMIT: 256M
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  app:
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    container_name: project_app
+    volumes:
+      - ./:/var/www
+    restart: unless-stopped
+    depends_on:
+      - db
+    command: sh -c "php artisan storage:link && php-fpm"
+
+  db:
+    image: mysql:8.0
+    container_name: project_db
+    volumes:
+      - ./tmp/db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: so_penaty_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "9091:3306"
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: project_phpmyadmin
+    environment:
+      PMA_PORT: 3306
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - db
+    ports:
+      - "3001:80"
+    restart: unless-stopped
+
+  reverb:
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    container_name: project_reverb
+    volumes:
+      - ./:/var/www
+    environment:
+      APP_ENV: local
+      APP_KEY: base64:6CoyDCnx2U1a4SmJryNI+VkItYaUv5kKXbpBow7hTNw=
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: so_penaty_db
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      REVERB_APP_ID: default
+      REVERB_APP_KEY: local
+      REVERB_APP_SECRET: local
+      REVERB_HOST: 0.0.0.0
+      REVERB_PORT: 8080
+      REVERB_SCHEME: http
+    depends_on:
+      - db
+    ports:
+      - "8085:8080"
+    command: sh -c "sleep 10 && php artisan reverb:start"
+    restart: unless-stopped
+
+---
+
+# 🛠 Локальная разработка: docker-compose.override.yml
+
+services:
+  nginx:
+    ports:
+      - "9090:80"
+
+  node:
+    image: node:18
+    container_name: project_node
+    working_dir: /var/www
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/var/www
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"
+    restart: unless-stopped
+    depends_on:
+      - app
+
+---
+
+# 🚀 Продакшен: docker-compose.prod.yml
+
+services:
+  nginx:
+    volumes:
+      - ./:/var/www
+      - ./_docker/nginx/:/etc/nginx/conf.d/
+      - ./certbot/conf/live/new.so-penaty.ru:/etc/letsencrypt/live/new.so-penaty.ru:ro
+      - ./certbot/conf/archive/new.so-penaty.ru:/etc/letsencrypt/archive/new.so-penaty.ru:ro
+      - ./certbot/www:/var/www/certbot
+    ports:
+      - "80:80"
+      - "443:443"
+
+  node:
+    image: node:18
+    container_name: project_node
+    working_dir: /var/www
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./:/var/www
+    command: sh -c "npm ci && npm run build"
+    restart: unless-stopped
+    depends_on:
+      - app

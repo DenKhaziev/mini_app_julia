@@ -4,13 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('TestPage', [
-        'message' => 'Привет с главной страницы!'
-    ]);
+    return Inertia::render('Main');
 });
 
-Route::get('/test', function () {
-    return Inertia::render('TestPage', [
-        'message' => 'Привет из Inertia!'
-    ]);
-});
+// Route::get('/test', function () {
+//     return Inertia::render('TestPage', [
+//         'message' => 'Привет из Inertia!'
+//     ]);
+// });

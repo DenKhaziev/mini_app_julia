@@ -26,14 +26,14 @@ const products = ref([
     id: 1,
     name: 'Товар 1',
     description: 'Описание товара 1',
-    price: 990,
+    price: 1000,
     image: 'https://placehold.co/400x300?text=Product+1',
   },
   {
     id: 2,
     name: 'Товар 2',
     description: 'Описание товара 2',
-    price: 1490,
+    price: 2098,
     image: 'https://placehold.co/400x300?text=Product+2',
   },
   {

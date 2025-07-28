@@ -1,14 +1,14 @@
 <script setup>
-import ProductList from '../Components/ProductList.vue'
-import MainPage from '../Components/MainPage.vue'
+import OurWorks from "../Components/OurWorks.vue";
+import MainLayout from "./Layouts/MainLayout.vue";
 
 const props = defineProps({
   message: String
 })
-</script> 
+</script>
 <template>
-  <div class="text-center">
-    <MainPage />
-  </div>
+  <MainLayout>
+    <OurWorks />
+  </MainLayout>
 </template>
 

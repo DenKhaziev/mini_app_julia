@@ -6,9 +6,11 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Main');
 });
+Route::get('/works', function () {
+    return Inertia::render('Works');
+});
+Route::get('/lashes', function () {
+    return Inertia::render('Lashes');
+});
 
-// Route::get('/test', function () {
-//     return Inertia::render('TestPage', [
-//         'message' => 'Привет из Inertia!'
-//     ]);
-// });
+

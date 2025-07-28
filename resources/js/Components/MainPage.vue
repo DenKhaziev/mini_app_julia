@@ -1,10 +1,4 @@
 <template>
-    <div class="min-h-screen p-4 space-y-6 bg-zinc-900 text-white">
-      <div class="text-center space-y-1">
-        <h1 class="text-3xl font-bold">Organic Beauty Studio</h1>
-        <p class="text-sm text-zinc-400">твоё пространство красоты</p>
-      </div>
-  
       <div
         v-for="(section, index) in sections"
         :key="index"
@@ -19,7 +13,7 @@
           <p class="text-zinc-200 text-base">{{ section.text }}</p>
         </div>
       </div>
-  
+
       <div class="flex flex-col gap-4 pt-4">
         <a
           href="https://t.me/your_bot_or_booking_link"
@@ -34,9 +28,9 @@
           Написать в WhatsApp
         </a>
       </div>
-    </div>
+
   </template>
-  
+
   <script setup>
   const sections = [
     {
@@ -57,4 +51,3 @@
     },
   ]
   </script>
-  

@@ -1,8 +1,7 @@
 <script setup>
-import { ref, onMounted} from 'vue'
-import axios from 'axios'
+import axios from "axios";
+import {onMounted, ref} from "vue";
 import {useRevealOnScroll} from "../composables/useRevealOnScroll.js";
-
 const photos = ref([])
 const activePhoto = ref(null)
 
@@ -16,7 +15,7 @@ function closePhoto() {
 onMounted(() => {
     axios.get('/api/bot-photos', {
         params: {
-            category: 'lashes'
+            category: 'tone'
         }
     }).then(response => {
         photos.value = response.data
@@ -25,12 +24,11 @@ onMounted(() => {
 const { revealedIndexes } = useRevealOnScroll(photos)
 </script>
 
-
 <template>
     <div>
-        <h2>Ресницы</h2>
+        <h2>Окрашивание в один тон</h2>
         <!-- Сетка -->
-        <div v-if="photos.length" class="grid grid-cols-2 gap-0">
+        <div class="grid grid-cols-2 gap-0">
             <div
                 v-for="(photo, index) in photos"
                 :key="index"
@@ -63,7 +61,7 @@ const { revealedIndexes } = useRevealOnScroll(photos)
     </div>
 </template>
 
-<style>
+<style scoped>
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.2s ease;
@@ -71,14 +69,5 @@ const { revealedIndexes } = useRevealOnScroll(photos)
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
-}
-.animate-fade-in-up {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.7s ease-out;
-}
-.animate-fade-in-up.entered {
-    opacity: 1;
-    transform: translateY(0);
 }
 </style>

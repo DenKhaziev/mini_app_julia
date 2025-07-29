@@ -1,9 +1,12 @@
 <script setup>
-import { ref, onMounted} from 'vue'
-import axios from 'axios'
-import {useRevealOnScroll} from "../composables/useRevealOnScroll.js";
+import { useRevealOnScroll } from '@/composables/useRevealOnScroll'
+import {onMounted, ref} from 'vue'
+import axios from "axios";
 
-const photos = ref([])
+const props = defineProps({
+    photos: Array
+})
+// const photos = ref([])
 const activePhoto = ref(null)
 
 function openPhoto(photo) {
@@ -13,26 +16,24 @@ function closePhoto() {
     activePhoto.value = null
 }
 
-onMounted(() => {
-    axios.get('/api/bot-photos', {
-        params: {
-            category: 'lashes'
-        }
-    }).then(response => {
-        photos.value = response.data
-    })
-})
-const { revealedIndexes } = useRevealOnScroll(photos)
+// onMounted(() => {
+//     axios.get('/api/bot-photos').then(response => {
+//         photos.value = response.data
+//     })
+// })
+const photos = ref(props.photos)
+const { revealedIndexes } = useRevealOnScroll(props.photos)
+console.log(photos)
 </script>
-
 
 <template>
     <div>
-        <h2>Ресницы</h2>
-        <!-- Сетка -->
-        <div v-if="photos.length" class="grid grid-cols-2 gap-0">
+        <div
+            v-if="props.photos.length"
+            class="grid grid-cols-2 gap-0"
+        >
             <div
-                v-for="(photo, index) in photos"
+                v-for="(photo, index) in props.photos"
                 :key="index"
                 :data-index="index"
                 class="reveal-section aspect-square overflow-hidden cursor-pointer animate-fade-in-up"
@@ -46,7 +47,7 @@ const { revealedIndexes } = useRevealOnScroll(photos)
                 />
             </div>
         </div>
-        <!-- Фуллскрин -->
+
         <transition name="fade">
             <div
                 v-if="activePhoto"

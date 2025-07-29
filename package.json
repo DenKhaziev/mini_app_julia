@@ -25,6 +25,7 @@
         "@vue/compiler-sfc": "^3.5.16",
         "dotenv": "^17.2.0",
         "node-telegram-bot-api": "^0.66.0",
-        "vue": "^3.5.16"
+        "vue": "^3.5.16",
+        "vue-router": "^4.5.1"
     }
 }

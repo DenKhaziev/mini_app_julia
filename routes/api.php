@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\PhotoApiController;
 use App\Models\BotButton;
 use App\Models\BotPhoto;
 use Illuminate\Support\Facades\Route;
@@ -18,4 +19,7 @@ Route::get('/bot-photos', function () {
         ->orderByDesc('created_at')
         ->get(['image_path', 'category']);
 });
+
+Route::get('/api/gallery/{category}', [PhotoApiController::class, 'getPhotos']);
+
 

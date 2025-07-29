@@ -40,23 +40,36 @@ import axios from 'axios';
 
 export default async function (bot, query, WEBAPP_URL) {
     const chatId = query.message.chat.id;
+    const messageId = query.message.message_id;
     const data = query.data;
 
-    bot.answerCallbackQuery(query.id); // можно вызывать сразу
+    // Всегда сразу отвечаем на callback — чтобы Telegram убрал "часики"
+    bot.answerCallbackQuery(query.id);
 
+    // Статичный блок "О нас"
     if (data === 'about') {
-        return bot.sendMessage(chatId, 'Organic Beauty Studio — уютное пространство...');
+        return bot.editMessageText(
+            'Organic Beauty Studio — уютное пространство, где красота и забота о себе сочетаются с профессионализмом 🌸',
+            {
+                chat_id: chatId,
+                message_id: messageId
+            }
+        );
     }
 
-    // всё остальное — универсально через menu_key
     try {
+        // Загружаем кнопки из базы по ключу menu=...
         const res = await axios.get(`${WEBAPP_URL}/api/bot-buttons?menu=${data}`);
         const buttons = res.data;
 
         if (buttons.length === 0) {
-            return bot.sendMessage(chatId, 'Раздел временно недоступен.');
+            return bot.editMessageText('Раздел временно недоступен.', {
+                chat_id: chatId,
+                message_id: messageId,
+            });
         }
 
+        // Собираем inline-клавиатуру
         const inline_keyboard = buttons.map(btn => {
             return [btn.type === 'web_app'
                 ? { text: btn.text, web_app: { url: btn.value } }
@@ -64,14 +77,22 @@ export default async function (bot, query, WEBAPP_URL) {
             ];
         });
 
-        bot.sendMessage(chatId, 'Выберите категорию:', {
+        // Меняем сообщение и кнопки
+        return bot.editMessageText('Выберите категорию:', {
+            chat_id: chatId,
+            message_id: messageId,
             reply_markup: {
                 inline_keyboard
             }
         });
+
     } catch (err) {
         console.error('Ошибка загрузки кнопок:', err);
-        bot.sendMessage(chatId, 'Произошла ошибка, попробуйте позже.');
+        return bot.editMessageText('Произошла ошибка, попробуйте позже.', {
+            chat_id: chatId,
+            message_id: messageId
+        });
     }
 }
+
 

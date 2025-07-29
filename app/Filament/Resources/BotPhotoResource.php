@@ -53,19 +53,22 @@ class BotPhotoResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\ImageColumn::make('image_path')
+                ->label('Фото')
+                    ->disk('public')
+                    ->circular()
+                    ->size(40),
+
+                Tables\Columns\TextColumn::make('category')
+                    ->label('Категория')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Добавлено')
+                    ->dateTime('d.m.Y H:i'),
             ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array

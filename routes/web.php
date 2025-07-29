@@ -8,6 +8,10 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Main');
 });
+
+Route::get('/about', function () {
+    return Inertia::render('AboutUs');
+});
 Route::get('/works', function () {
     return Inertia::render('Works');
 });
